@@ -11,10 +11,42 @@ let notes = [
 
 // Строим схему с помощью языка схем GraphQL  
 const typeDefs = gql`
-        type Query {hello: String}`
+        type Note {
+            id: ID!
+            content: String!
+            author: String!
+        }
+        type Query {
+            hello: String!
+            notes: [Note!]!
+            note(id: ID!): Note! 
+        }
+        type Mutation {
+            newNote(content: String!, author: String!): Note!
+        }
+`
 ;  
 // Предоставляем функции распознавания для полей схемы   
-const resolvers = {    Query: {      hello: () => 'Hello world!'    }  };  
+const resolvers = {
+                Query: {
+                    hello: () => 'Hello world!',
+                    notes: ()=> notes,
+                    note: (parent, args) => {
+                        return notes.find(note => note.id === args.id)
+                    }    
+                },
+                Mutation: {
+                    newNote: (parent, args)=> {
+                        let newValue = {
+                            id: String(notes.length + 1),
+                            content: args.content,
+                            author: args.author
+                        }
+                        notes.push(newValue)
+                        return newValue
+                    }
+                }
+};  
 const app = express();  
 // Настраиваем Apollo Server  
 const server = new ApolloServer({ typeDefs, resolvers });  
