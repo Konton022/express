@@ -3,6 +3,7 @@ const { ApolloServer, gql } = require('apollo-server-express');
 require('dotenv').config(); 
 
 const db = require('./db');
+const models = require('./models/index')
 // Запускаем сервер на порте, указанном в файле .env, или на порте 4000  
 const port = process.env.PORT || 4000;
 // Сохраняем значение DB_HOST в виде переменной  
@@ -37,20 +38,19 @@ const typeDefs = gql`
 const resolvers = {
                 Query: {
                     hello: () => 'Hello world!',
-                    notes: ()=> notes,
+                    notes: async ()=> {
+                        return await models.Note.find()
+                    },
                     note: (parent, args) => {
                         return notes.find(note => note.id === args.id)
                     }    
                 },
                 Mutation: {
-                    newNote: (parent, args)=> {
-                        let newValue = {
-                            id: String(notes.length + 1),
+                    newNote: async (parent, args)=> {
+                        return await models.Note.create({
                             content: args.content,
                             author: args.author
-                        }
-                        notes.push(newValue)
-                        return newValue
+                        })
                     }
                 }
 };  
