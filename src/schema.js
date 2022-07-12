@@ -1,17 +1,19 @@
-const {gql} = require('apollo-server-express')
+const { gql } = require('apollo-server-express');
 
-// Строим схему с помощью языка схем GraphQL  
+// Строим схему с помощью языка схем GraphQL
 module.exports = gql`
-        type Note {
-            id: ID!
-            content: String!
-            author: String!
-        }
-        type Query {
-            notes: [Note!]!
-            note(id: ID!): Note! 
-        }
-        type Mutation {
-            newNote(content: String!, author: String!): Note!
-        }
-`;  
+    type Note {
+        id: ID!
+        content: String!
+        author: String!
+    }
+    type Query {
+        notes: [Note!]!
+        note(id: ID!): Note!
+    }
+    type Mutation {
+        newNote(content: String!, author: String!): Note!
+        updateNote(id: ID!, content: String!, author: String): Note!
+        deleteNote(id: ID!): Boolean!
+    }
+`;
