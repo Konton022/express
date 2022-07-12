@@ -1,7 +1,14 @@
 const express = require('express');  
-const { ApolloServer, gql } = require('apollo-server-express');  
+const { ApolloServer, gql } = require('apollo-server-express');
+require('dotenv').config(); 
+
+const db = require('./db');
 // Запускаем сервер на порте, указанном в файле .env, или на порте 4000  
 const port = process.env.PORT || 4000;
+// Сохраняем значение DB_HOST в виде переменной  
+const DB_HOST = process.env.DB_HOST;
+// const DB_HOST = "mongodb://185.7.116.186:27017/notedly" 
+
 
 let notes = [
     { id: '1', content: 'This is a note', author: 'Adam Scott' },
@@ -47,7 +54,11 @@ const resolvers = {
                     }
                 }
 };  
-const app = express();  
+const app = express();
+
+// Подключаем БД   
+db.connect(DB_HOST);
+
 // Настраиваем Apollo Server  
 const server = new ApolloServer({ typeDefs, resolvers });  
 // Применяем промежуточное ПО Apollo GraphQL и указываем путь к /api
